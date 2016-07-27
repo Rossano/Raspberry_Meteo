@@ -8,8 +8,25 @@ import java.sql.SQLException;
 import database.*;
 import sensor.*;
 
+/**
+ * @author Rossano Pantaleoni
+ * @version 1.0
+ * @since 1.0
+ * 
+ * <h1>Main Meteo Station program<h1>
+ * 
+ * <p>This program reads the data from the temperature and humidity sensors
+ * and stores them into the mysql database<p>
+ *  
+ */
 public class raspyMeteo {
 	
+	/**
+	 * <h3>Main Java program<h3>
+	 * 
+	 * @param args none
+	 * @throws InterruptedException from the GPIO methods
+	 */
 	public static void main (String [] args) throws InterruptedException
 	{
 		try {
@@ -21,23 +38,37 @@ public class raspyMeteo {
 			//ghs.sendCommand();
 			//ghs.getData();
 			
-			Dallas_ds18B20_TempeatureSensor gts = new Dallas_ds18B20_TempeatureSensor();
+			/*
+			 *  Defines the ds18B20 object and its reading function
+			 */
+			Dallas_ds18B20_TemperatureSensor gts = new Dallas_ds18B20_TemperatureSensor();
 			gts.setDataBehavior(new ds18B20_Read());
 			
+			/*
+			 * Defines the mysql database object
+			 */
 			dbConnection db = new dbConnection("HomeWheatherStation");
 			
 			double temperature;
-			//for (int i=0; i<10; i++)
+			/*
+			 * Main program loop
+			 */			
 			for (;;)
 			{
+				// reads the temperature and print it on the screen
 				temperature = gts.getTemperature();
 				System.out.printf("Temperature = %.3f\n", temperature );
 				
+				// Get the date for the timestamp, take care on the format to be readable by mysql
 				Date _date = new Date();
 				SimpleDateFormat datef = new SimpleDateFormat("yyyy-MM-dd");
 				SimpleDateFormat timef = new SimpleDateFormat("HH:mm:ss");
+				// Creates the sql writing string
 				String sql = "insert into sensorMeas (tdate, ttime, tTempCh, tHumCh, tTemp, tHum) values (date('" + 
 						datef.format(_date) + "'), time('" + timef.format(_date) + "'), 0, 0, " + temperature + ", 0.0);";
+				/*
+				 * Write the data to the mysql database
+				 */
 				db.dbUpdate(sql); 
 //			System.out.println(rs.toString());
 //			try {
@@ -48,10 +79,12 @@ public class raspyMeteo {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
+				/*
+				 * Waits 5 minutes
+				 */
 				Thread.sleep(300000);
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {		
 			e.printStackTrace();
 			System.out.println(e.toString());
 		}

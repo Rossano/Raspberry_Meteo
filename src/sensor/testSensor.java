@@ -13,7 +13,7 @@ public class testSensor {
 		ghs.sendCommand();
 		ghs.getData();
 		
-		Dallas_ds18B20_TempeatureSensor gts = new Dallas_ds18B20_TempeatureSensor();
+		Dallas_ds18B20_TemperatureSensor gts = new Dallas_ds18B20_TemperatureSensor();
 		gts.setDataBehavior(new ds18B20_Read());
 		
 		double temperature;

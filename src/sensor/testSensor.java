@@ -6,7 +6,8 @@ public class testSensor {
 	public static void main(String [] args) throws InterruptedException {
 		String desc;
 		DHT11_HumidityTemperatureSensor ghs = new DHT11_HumidityTemperatureSensor();
-		ghs.setDataBehavior(new DHT11_Read());
+		ghs.setDataBehavior(new DHT11_Read());			// Raspberry Pi
+		//ghs.setDataBehavior(new DHT11_Read_PC());		// PC
 		
 		desc = ghs.getDescription();
 		System.out.println(desc);
@@ -14,7 +15,8 @@ public class testSensor {
 		ghs.getData();
 		
 		Dallas_ds18B20_TemperatureSensor gts = new Dallas_ds18B20_TemperatureSensor();
-		gts.setDataBehavior(new ds18B20_Read());
+		gts.setDataBehavior(new ds18B20_Read());		// Raspberry Pi
+		//ghs.setDataBehavior(new ds18B20_Read_PC());		// PC
 		
 		double temperature;
 		//for (int i=0; i<10; i++)

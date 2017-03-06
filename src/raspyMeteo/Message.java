@@ -10,7 +10,7 @@ package raspyMeteo;
  * 
  * <h1>Message Class<h1>
  * 
- * <p>This class provides a way to send message throug blocking queue for data
+ * <p>This class provides a way to send message through blocking queue for data
  * exchange between threads.<p>
  *
  */

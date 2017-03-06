@@ -27,16 +27,24 @@ import sensor.*;
  */
 public class sensorThread implements Runnable {
 
+	private boolean _target_PC;
 	protected BlockingQueue<Message> queue = null;
 	private Dallas_ds18B20_TemperatureSensor gts;
 	private DHT11_HumidityTemperatureSensor ghs;
 	
-	public sensorThread(BlockingQueue<Message> queue) {
+	public sensorThread(BlockingQueue<Message> queue, boolean target_PC) {
+		_target_PC = target_PC;
 		this.queue = queue;
 		gts = new Dallas_ds18B20_TemperatureSensor();
-		gts.setDataBehavior(new ds18B20_Read_PC());
 		ghs = new DHT11_HumidityTemperatureSensor();
-		ghs.setDataBehavior(new DH11_Read_PC());
+		if (_target_PC) {
+			gts.setDataBehavior(new ds18B20_Read_PC());			// PC
+			ghs.setDataBehavior(new DHT11_Read_PC());			// PC
+		}
+		else {
+			gts.setDataBehavior(new ds18B20_Read());			// Raspberry Pi
+			ghs.setDataBehavior(new DHT11_Read_PC()); 			// Raspberry Pi
+		}
 	}
 	
 	public void run() {
@@ -59,6 +67,10 @@ public class sensorThread implements Runnable {
 	
 	public BlockingQueue<Message> getQueue() {
 		return queue;
+	}
+	
+	public boolean getTarget_PC() {
+		return _target_PC;
 	}
 	
 }

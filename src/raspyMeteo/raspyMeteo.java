@@ -21,6 +21,8 @@ import sensor.*;
  */
 public class raspyMeteo {
 	
+	private static final boolean _target_PC = false;
+	
 	/**
 	 * <h3>Main Java program<h3>
 	 * 
@@ -42,13 +44,21 @@ public class raspyMeteo {
 			 *  Defines the ds18B20 object and its reading function
 			 */
 			Dallas_ds18B20_TemperatureSensor gts = new Dallas_ds18B20_TemperatureSensor();
-			gts.setDataBehavior(new ds18B20_Read());
+			// Based on the target device, chose which read method to implement on the 
+			// polymorph sensor class
+			if (!_target_PC) {
+				gts.setDataBehavior(new ds18B20_Read());			// Raspberry Pi
+			}
+			else {
+				gts.setDataBehavior(new ds18B20_Read_PC());			// PC
+			}
 			
 			/*
-			 * Defines the mysql database object
+			 * Defines the mysql database object (Raspberry Pi only)
 			 */
-			dbConnection db = new dbConnection("HomeWheatherStation");
-			
+			if (!_target_PC) {
+				dbConnection db = new dbConnection("HomeWheatherStation");
+			}
 			double temperature;
 			/*
 			 * Main program loop
@@ -67,9 +77,11 @@ public class raspyMeteo {
 				String sql = "insert into sensorMeas (tdate, ttime, tTempCh, tHumCh, tTemp, tHum) values (date('" + 
 						datef.format(_date) + "'), time('" + timef.format(_date) + "'), 0, 0, " + temperature + ", 0.0);";
 				/*
-				 * Write the data to the mysql database
+				 * Write the data to the mysql database (Raspberry Pi only)
 				 */
-				db.dbUpdate(sql); 
+				if(!_target_PC) {
+					db.dbUpdate(sql);
+				} 
 //			System.out.println(rs.toString());
 //			try {
 //				while (rs.next()) {

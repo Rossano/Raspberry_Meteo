@@ -1,6 +1,14 @@
 package sensor;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.ClosedByInterruptException;
+import java.nio.channels.InterruptedByTimeoutException;
+import java.util.logging.Level;
+
+import raspyMeteo.sensorThread;
+
+import com.sun.istack.internal.logging.Logger;
 
 /**
  * @author Rossano Pantaleoni
@@ -20,20 +28,41 @@ public class ds18B20_Read implements dataBehavior {
 	// Storage for the raw data
 	private int[] _data = new int[5];
 	// Name of the file where are stored the 1-wire data, and the member implementing the file
-	private String fileName = "/sys/bus/w1/devices/28-0214661b30ff/w1_slave";	
+	private final String fileName = "/sys/bus/w1/devices/28-0214661b30ff/w1_slave";	
 	private FileInputStream file;
+//	private ByteBuffer buf;
+	private byte[] buf;
+	public int _timeout = 500;
 	
 	
 	/**
 	 * <h3>ds18B20_Read Default Constructor<h3>
-	 * <p>Default constructor for the ds18B20_Read class, it does nothing, all is in the read method.<p>
+	 * <p>Default constructor for the ds18B20_Read class, it sets the timeout variable value and allocate the 
+	 * read buffer.<p>
 	 * 
 	 * @param none
 	 */
 	public ds18B20_Read() {
 		//_data = new int[5];
+		_timeout = 500;
+//		buf = ByteBuffer.allocate(100);
+		buf = new byte[100];
 	}
-
+	
+	/**
+	 * <h3>ds18B20_Read Default Constructor<h3>
+	 * <p>Constructor for the ds18B20_Read class, it set the timeout to the parameter passed and
+	 * allocate the read buffer.<p>
+	 * 
+	 * @param timeout: 
+	 */
+	public ds18B20_Read(int timeout) {
+		//_data = new int[5];
+		_timeout = timeout;
+//		buf = ByteBuffer.allocate(100);
+		buf = new byte[100];
+	}
+	
 	/** 
 	 * <h3>read Method<h3>
 	 * <p>This is a method to implements the low level read on the sensor. As said, it is  a read in a file
@@ -52,7 +81,7 @@ public class ds18B20_Read implements dataBehavior {
 			file = new FileInputStream(fileName);
 			// Check if the file exists, else throw an exception
 			if (file == null) throw new FileNotFoundException("28-0214661b30ff device not found");
-			byte[] buf = new byte[100];
+//			byte[] buf = new byte[100];
 			int total = 0;
 			int nRead = 0;
 			
@@ -108,6 +137,73 @@ public class ds18B20_Read implements dataBehavior {
 	 */
 	@Override
 	public boolean transfer() {
-		return false;
+//		return false;
+		try {
+			if((file = new FileInputStream(fileName)) == null) {
+				throw new RuntimeException("Temperature sensor system file not found!");
+			}
+			try {
+				int ret = readTimeout(file, _timeout);				
+			}
+			finally {
+				file.close();
+			}
+		}		
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return true;
+	}
+	
+	private int readTimeout(final FileInputStream file, int timeout) throws IOException, InterruptedException {
+		final int[] dataReady = {0};
+		IOException[] exceptions = {null};
+		
+		final Thread reader = new Thread() {
+			public void run() {
+				try {
+					byte[] _buf = new byte[100];
+					dataReady[0] = file.read(buf);
+					//for(int i = 0; i < 100; i++) buf.[i] = _buf[i];
+				}
+				catch(ClosedByInterruptException e) {					
+					Logger.getLogger(sensorThread.class.getName(),null).log(Level.SEVERE, "Timeout when reading to the sensor system file");
+					try {
+						throw new InterruptedByTimeoutException();
+					} catch (InterruptedByTimeoutException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				catch(IOException e) {
+					Logger.getLogger(sensorThread.class.getName(),null).log(Level.SEVERE, "IO Error");
+					throw new RuntimeException(e);
+				}
+			}
+		};
+		
+		Thread interruptor = new Thread() {
+			public void run() {
+				reader.interrupt();
+			}
+		};
+		
+		reader.start();
+		
+		for (;;) {
+			reader.join(timeout);
+			if(reader.isAlive()) break;
+			interruptor.start();
+			interruptor.join(100);
+			reader.join(100);
+			if(!reader.isAlive()) break;
+			Logger.getLogger(sensorThread.class.getName(), null).log(Level.SEVERE, "Deadlock reading on file");
+		}
+		
+		if(exceptions[0] != null) {
+			throw exceptions[0];
+		}
+		
+		return dataReady[0];
 	}
 }

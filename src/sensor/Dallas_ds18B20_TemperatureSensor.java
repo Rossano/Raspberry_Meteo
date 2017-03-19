@@ -76,7 +76,7 @@ public class Dallas_ds18B20_TemperatureSensor extends sensor {
 		 */
 		data = getDataBehavior().read();
 		// Dummy debug read of the int values retrieved from the sensor
-		for (int i=0; i<5; i++) System.out.printf("%02x ", data[i]);
+//		for (int i=0; i<5; i++) System.out.printf("%02x ", data[i]);
 		int temp = 0;
 		int pow = 10000;
 		/*

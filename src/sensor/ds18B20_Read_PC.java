@@ -15,6 +15,10 @@ package sensor;
  */
 public class ds18B20_Read_PC implements dataBehavior {
 
+	/*public ds18B20_Read_PC() {
+		
+	}*/
+	
 	/**
 	 * @see sensor.dataBehavior#transfer()
 	 * 
@@ -40,11 +44,16 @@ public class ds18B20_Read_PC implements dataBehavior {
 	public int[] read() {
 		int[] foo = new int[5];
 		
-		foo[0] = 2;
+		/*foo[0] = 2;
 		foo[1] = (int)Math.round(Math.random() + 0.5) + 2;
-		foo[2] = (int)Math.round(Math.random() * 10);
-		foo[3] = (int)Math.round(Math.random() * 10);
-		foo[4] = (int)Math.round(Math.random() * 10);
+		foo[2] = (int)Math.round(Math.random() * 1);
+		foo[3] = (int)Math.round(Math.random() * 1);
+		foo[4] = (int)Math.round(Math.random() * 1); */
+		foo[0] = 2 + 0x30;
+		foo[1] = 3 + 0x30;
+		foo[2] = 0 + 0x30;
+		foo[3] = 2 + 0x30;
+		foo[4] = 6 + 0x30;
 		
 		return foo;
 	}

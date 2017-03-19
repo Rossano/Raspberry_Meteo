@@ -27,6 +27,7 @@ public abstract class sensor {
 	 */
 	private commandBehavior _commandBehavior;
 	private dataBehavior _dataBehavior;
+	private dataReadingMode _dataReadingMode;
 	
 	/**
 	 * Abstract method to be implemented by every child

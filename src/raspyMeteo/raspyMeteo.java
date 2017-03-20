@@ -81,6 +81,7 @@ public class raspyMeteo {
 			//}
 			double temperature;
 			double humidity;
+			long countAlive = 0;
 			/*
 			 * Main program loop
 			 */			
@@ -92,8 +93,8 @@ public class raspyMeteo {
 				double[] m = msg.getMessage();
 				temperature = m[0];
 				humidity = m[1];
-//				System.out.printf("Temperature = %.3f\tCount = %d\n", temperature, queue.size() );
-				String str = String.format("Temperature = %.3f\tCount = %d\n", temperature, queue.size());
+
+				String str = String.format("Alive since: %d\tTemperature = %.3f\tHumidity = %.3f\tCount = %d\n", countAlive++, temperature, humidity, queue.size());
 				LOG.log(Level.INFO, str);
 				
 				// Get the date for the timestamp, take care on the format to be readable by mysql
@@ -107,7 +108,7 @@ public class raspyMeteo {
 				 * Write the data to the mysql database (Raspberry Pi only)
 				 */
 				//if(!_target_PC) {
-				//db.dbUpdate(sql);							// Raspberry Pi
+//				db.dbUpdate(sql);							// Raspberry Pi
 				//} 
 //			System.out.println(rs.toString());
 //			try {
@@ -118,11 +119,7 @@ public class raspyMeteo {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-				/*
-				 * Waits 5 minutes
-				 */
-//				Thread.sleep(300000);
-				Thread.sleep(1000);
+
 			}
 		} catch (Exception e) {		
 //			e.printStackTrace();

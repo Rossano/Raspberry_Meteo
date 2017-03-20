@@ -146,7 +146,7 @@ public class sensorThread implements Runnable {
 			// Message msg = new Message(0,0);
 
 			int delay = delay_ms / 1;
-			int[] _humidity = new int[5];
+			int[] _humidity = new int[5];			
 			// Repeat the loop until it is not received a message to quit
 			while (!_exit) {
 				// repeat the loop until some data are not avalable
@@ -155,19 +155,19 @@ public class sensorThread implements Runnable {
 					_humidity = ghs.getDataBehavior().read();
 					// If data from humidity sensor is available it stores and logs it
 					if (_humidity != null) {
-						temperature = _humidity[0] + 0.1 * _humidity[1];
-						humidity = _humidity[2] + 0.1 * _humidity[3];
+						temperature = _humidity[2] + 0.1 * _humidity[3];
+						humidity = _humidity[0] + 0.1 * _humidity[1];
 						String s1 = String.format("Humidity: %d.%d\n", _humidity[0], _humidity[1]);
 						String s2 = String.format("Temperature: %d.%d\n", _humidity[2], _humidity[3]);
-						Logger.getLogger(raspyMeteo.class.getName()).log(Level.INFO, s1);
-						Logger.getLogger(raspyMeteo.class.getName()).log(Level.INFO, s2);
+						Logger.getLogger(raspyMeteo.class.getName()).log(Level.FINE, s1);
+						Logger.getLogger(raspyMeteo.class.getName()).log(Level.FINE, s2);
 					}
 				} while (_humidity == null);
 				// Post the message with temperature/himidity values into the communication queue
 				Message msg = new Message(temperature, humidity);
 
 				// msg = processing(delay, 1);
-				LOG.log(Level.INFO,
+				LOG.log(Level.FINE,
 						"Message = ({0}, {1})",
 						new Object[] { msg.getMessage()[0], msg.getMessage()[1] });
 				// Post the message
@@ -178,6 +178,7 @@ public class sensorThread implements Runnable {
 				// msg.getMessage()[0], msg.getMessage()[1]);
 				// LOG.log(Level.INFO, "Temperature = {0}\tHumidity = {1}", new
 				// Object [] {msg.getMessage()[0], msg.getMessage()[1]}); //sb);
+				Thread.sleep(delay_ms);
 			}
 		} catch (InterruptedException e) {
 			// e.printStackTrace();

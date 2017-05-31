@@ -41,10 +41,12 @@ public class DHT11_Read_PC implements dataBehavior {
 	 */
 	@Override
 	public int[] read() {
-		int[] foo = new int [2];
+		int[] foo = new int [5];
 		
 		foo[0] = (int) Math.round(Math.random() * 100);
-		foo[1] = (int)0;
+		foo[1] = (int) 0;
+		foo[2] = (int) Math.round(Math.random() * 100);
+		foo[3] = (int) Math.round(Math.random() * 100);
 		
 		return foo;
 	}

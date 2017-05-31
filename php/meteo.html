@@ -2,30 +2,166 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Stazione Meteo Raspberry</title>
+<title>Raspberry Wheather Station</title>
+<style type="text/css">
+	table, th, td {
+		border: 1px solid black;
+	}
+	
+	div.container {
+		width: 100%;
+		border: 1px solid gray;
+	}
+	
+	header,footer {
+		padding: 1em;
+		color: black;
+		background-color: white;
+		clear: left;
+		text-align: center;
+	}
+	
+	nav {
+		float: left;
+		max-width: 400px;
+		margin: 0;
+		padding: 1em;
+	}
+	
+	article {
+		margin-left: 170 px;
+		border-left: 1px solid gray;
+		padding: 1em;
+		overflow: hidden;
+	}
+	
+</style>
+<script type="text/javascript">
+	$(function () {
+		$("time[data-format]").each(function () {
+			var el = $(this);
+			var dt = moment(el.attr("datetime"));
+			el.text(dt.format(el.data("format")));
+		});
+	});
+</script>
 </head>
 <body>
 
+<div class="container">
+
+<header>
+	<h1>Raspberry Wheather Station</h1>
+</header>
+
+<nav>
 	<table>
-		<tr>
-			<form action="dayDisplay.php" method="post">
-				Data Inizio (dd-mm-aaaa): <input type="text" name="init" /><br>
-				Data Fine (dd-mm-aaaa): <input type="text" name="stop" /><br>
-				<input type="submit"><br>
-			</form>
+		<tr>		
+			Last Temperature/Humidity:<br>
+			<form action="./getLastMeteoData.php" method="post">
+				Temperature: <input type="text" name="temperature" value="<?php echo $temperature;?>" /> <br>
+				Humidity: <input type="text" name="humidity" /> <br>
+				<input type="submit" /> <br>
+			</form>			
 		</tr>
 		<tr>
-			<form action="periodDisplay.php" method="post">
-				Data Inizio (dd-mm-aaaa): <input type="text" name="init" /><br>
-				Data Fine (dd-mm-aaaa): <input type="text" name="stop" /><br>
-				<input type="submit"><br>
-			</form>
-		</tr>
+			<form action=""> 
+ 				Start:
+ 				<input type="date" id="startDate"><br>
+ 				End: 
+ 				<input type="date" id="endDate"><br>
+ 				<input type="button" action=onclick("alert('Click')") value="Show"><br>
+ 			</form>
+ 		</tr>
 		<tr>
-			<input src="refresh.php" /><br>
-		</tr>
+			<form> 
+ 				Average Temperature on Period: 
+ 				<input type="text" name="avgTemp" value=""><br> 
+ 				MAX Temperature on Period:
+ 				<input type="text" name="maxTemp" value=""><br> 
+ 				MIN Temperature on Period:
+ 				<input type="text" name="minTemp" value=""><br>
+ 				Average Humidity on Period:
+ 				<input type="text" name="avgHum" value=""><br>
+ 				MAX Humidity on Period:
+ 				<input type="text" name="maxHum" value=""><br>
+ 				MIN Humidity on Period:
+ 				<input type="text" name="minHum" value=""><br>
+ 			</form>
+		</tr>		
 	</table>
-	
-	
+</nav>
+<article>
+	<h2>Plot Area Article</h2>
+</article>
+
+<!-- <aside> -->
+<!-- 	Plot Area -->
+<!-- </aside> -->
+
+<footer>
+	Footer
+</footer>
+
+</div>
+<!-- <table align="center"> -->
+<!-- 	<tr><th>Raspberry Wheather Station</th></tr> -->
+<!-- </table> -->
+<!-- <table> -->
+<!-- 	<tr>			 -->
+<!-- 		<td> -->
+<!-- 			<th>Last Temperature/Humidity:</th> -->
+<!-- 			<input id="date"> -->
+<!-- 				<script> -->
+<!-- // 					document.getElementById("date").innerHTML = Date(); -->
+<!-- 				</script>						 -->
+<!-- 			<input id="time"> -->
+<!-- 				<script> -->
+<!-- // 					document.getElementById("time").innerHTML = Date(); -->
+<!-- 				</script> -->
+<!-- 				<br> -->
+<!-- 				<time datetime="<% = DateTime.UtcNow.ToString('u') %>" data-format="hh:mm:ss A"></time> -->
+<!-- 				<br> -->
+<!-- 				Actual Temperature:<br> -->
+<!-- 				Actual Humidity: -->
+<!-- 		</td> -->
+<!-- 		<td rowspan="3"> -->
+<!-- 				<h1>Plot</h1>			 -->
+<!-- 		</td>		 -->
+<!-- 	</tr>	 -->
+<!-- 	<tr> -->
+<!-- 		<th>Visualization Timeframe:</th>		 -->
+<!-- 	</tr> -->
+<!-- 	<tr> -->
+<!-- 		<td align="left"> -->
+<!-- 			<form action=""> -->
+<!-- 				Start: -->
+<!-- 				<input type="date" id="startDate"><br> -->
+<!-- 				End: -->
+<!-- 				<input type="date" id="endDate"><br> -->
+<!-- 				<input type="button" action=onclick("alert('Click')") value="Show">  -->
+<!-- 			</form> -->
+<!-- 		</td> -->
+<!-- 	</tr> -->
+<!-- 	<tr> -->
+<!-- 		<td align="left"> -->
+<!-- 			<form> -->
+<!-- 				Average Temperature on Period: -->
+<!-- 				<input type="text" name="avgTemp" value=""><br> -->
+<!-- 				MAX Temperature on Period: -->
+<!-- 				<input type="text" name="maxTemp" value=""><br> -->
+<!-- 				MIN Temperature on Period: -->
+<!-- 				<input type="text" name="minTemp" value=""><br> -->
+<!-- 				Average Humidity on Period: -->
+<!-- 				<input type="text" name="avgHum" value=""><br> -->
+<!-- 				MAX Humidity on Period: -->
+<!-- 				<input type="text" name="maxHum" value=""><br> -->
+<!-- 				MIN Humidity on Period: -->
+<!-- 				<input type="text" name="minHum" value=""><br> -->
+<!-- 			</form> -->
+<!-- 		</td> -->
+<!-- 	</tr> -->
+<!-- </table> -->
+
 </body>
 </html>

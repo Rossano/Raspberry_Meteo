@@ -77,7 +77,7 @@ public class raspyMeteo {
 			 * Defines the mysql database object (Raspberry Pi only)
 			 */
 			//if (!_target_PC) {
-//			  dbConnection db = new dbConnection("HomeWheatherStation");	//  Raspberry Pi
+			dbConnection db = new dbConnection("HomeWheatherStation");	//  Raspberry Pi
 			//}
 			double temperature;
 			double humidity;
@@ -103,12 +103,12 @@ public class raspyMeteo {
 				SimpleDateFormat timef = new SimpleDateFormat("HH:mm:ss");
 				// Creates the sql writing string
 				String sql = "insert into sensorMeas (tdate, ttime, tTempCh, tHumCh, tTemp, tHum) values (date('" + 
-						datef.format(_date) + "'), time('" + timef.format(_date) + "'), 0, 0, " + temperature + ", 0.0);";
+						datef.format(_date) + "'), time('" + timef.format(_date) + "'), 0, 0, " + temperature + ", " + humidity + ");";
 				/*
 				 * Write the data to the mysql database (Raspberry Pi only)
 				 */
 				//if(!_target_PC) {
-//				db.dbUpdate(sql);							// Raspberry Pi
+				db.dbUpdate(sql);							// Raspberry Pi
 				//} 
 //			System.out.println(rs.toString());
 //			try {

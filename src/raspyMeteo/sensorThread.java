@@ -54,7 +54,8 @@ public class sensorThread implements Runnable {
 	private boolean _exit = false;
 	public boolean read_humidity = true;
 	protected BlockingQueue<Message> queue = null;
-	private int delay_ms = 1000;
+	private int delay_ms = 5 * 60000;
+	private final int sensorReadingDelay_ms = 1500; 
 	private LinkedList<Double> _TempQueue = null;
 	private LinkedList<Double> _HumQueue = null;
 //	private Dallas_ds18B20_TemperatureSensor gts;
@@ -83,7 +84,7 @@ public class sensorThread implements Runnable {
 		ghs = new DHT11_HumidityTemperatureSensor();
 		//if (_target_PC) {
 		//gts.setDataBehavior(new ds18B20_Read_PC());			// PC
-		//ghs.setDataBehavior(new DHT11_Read_PC());				// PC
+//		ghs.setDataBehavior(new DHT11_Read_PC());				// PC
 		//}
 		//else {
 //		gts.setDataBehavior(new ds18B20_Read());				// Raspberry Pi
@@ -141,16 +142,29 @@ public class sensorThread implements Runnable {
 		// Everything is under try - catch to catch all exceptions
 		try {	
 			// Variable initialization
-			double temperature = 0;
-			double humidity = 0;
-			// Message msg = new Message(0,0);
+//			double temperature = 0;
+//			double humidity = 0;
+			Message msg = new Message(0,0);
 
-			int delay = delay_ms / 1;
-			int[] _humidity = new int[5];			
+			int delay;
+			int num = 100;
+			// Check if read delay is lower than sensor reading time
+			if ((delay_ms / num) > sensorReadingDelay_ms ) {
+				delay = delay_ms / num;
+			}
+			else {
+				num = delay_ms / sensorReadingDelay_ms;
+				delay = sensorReadingDelay_ms;
+			}
+			LOG.log(Level.INFO, String.format("Sensor reading configuration:\n"
+					+ "Delay = %d\n"
+					+ "Num = %d\n"
+					+ "Total time between data = %d", delay, num, num*delay) );
+//			int[] _humidity = new int[5];			
 			// Repeat the loop until it is not received a message to quit
 			while (!_exit) {
 				// repeat the loop until some data are not avalable
-				do {
+/*				do {
 					// temperature = gts.getTemperature();
 					_humidity = ghs.getDataBehavior().read();
 					// If data from humidity sensor is available it stores and logs it
@@ -165,8 +179,8 @@ public class sensorThread implements Runnable {
 				} while (_humidity == null);
 				// Post the message with temperature/himidity values into the communication queue
 				Message msg = new Message(temperature, humidity);
-
-				// msg = processing(delay, 1);
+*/
+				msg = processing(delay, num);
 				LOG.log(Level.FINE,
 						"Message = ({0}, {1})",
 						new Object[] { msg.getMessage()[0], msg.getMessage()[1] });
@@ -178,7 +192,7 @@ public class sensorThread implements Runnable {
 				// msg.getMessage()[0], msg.getMessage()[1]);
 				// LOG.log(Level.INFO, "Temperature = {0}\tHumidity = {1}", new
 				// Object [] {msg.getMessage()[0], msg.getMessage()[1]}); //sb);
-				Thread.sleep(delay_ms);
+//				Thread.sleep(delay_ms);
 			}
 		} catch (InterruptedException e) {
 			// e.printStackTrace();
